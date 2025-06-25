@@ -74,43 +74,48 @@ comebacks = [
 subreddit_list = (
     "IDONTGIVEASWAG+4chan+CringePurgatory+Whatcouldgowrong+memes+conspiracy+"
     "roastme+SipsTea+PublicFreakout+ClashRoyale+shitposting+instant_regret+"
-    "HadToHurt+rareinsults+Nicegirls+NoRules+madlads+cringereels"
-)
+    "HadToHurt+rareinsults+Nicegirls+NoRules+madlads+cringereels")
+def reddit_bot():
+    while True:
+        try:
+            print("🤖 [REBOOTING] ClapBot3000 loading...")
 
-# ===== MAIN LOOP: AUTO-RESTART ON CRASH =====
-while True:
-    try:
-        print("🤖 [REBOOTING] ClapBot3000 loading...")
+            reddit = praw.Reddit(
+                client_id=os.environ["CLIENT_ID"],
+                client_secret=os.environ["CLIENT_SECRET"],
+                user_agent="ClapBot3000 by /u/" + os.environ["USERNAME"],
+                username=os.environ["USERNAME"],
+                password=os.environ["PASSWORD"]
+            )
 
-        reddit = praw.Reddit(
-            client_id=os.environ["CLIENT_ID"],
-            client_secret=os.environ["CLIENT_SECRET"],
-            user_agent="ClapBot3000 by /u/" + os.environ["USERNAME"],
-            username=os.environ["USERNAME"],
-            password=os.environ["PASSWORD"]
-        )
+            print(f"✅ Logged in as: {reddit.user.me()}")
 
-        print(f"✅ Logged in as: {reddit.user.me()}")
+            subreddits = reddit.subreddit(subreddit_list)
+            replied_comments = set()
 
-        subreddits = reddit.subreddit(subreddit_list)
-        replied_comments = set()
+            for comment in subreddits.stream.comments(skip_existing=True):
+                text = comment.body.lower()
+                if any(trigger in text for trigger in trigger_phrases):
+                    if comment.id not in replied_comments and comment.author != reddit.user.me():
+                        reply = random.choice(comebacks)
+                        try:
+                            comment.reply(reply)
+                            print(f"🔥 Replied to: {comment.body}")
+                            print(f"👉 With: {reply}")
+                            replied_comments.add(comment.id)
+                            time.sleep(10)
+                        except Exception as reply_error:
+                            print(f"⚠️ Failed to reply: {reply_error}")
+                            time.sleep(5)
 
-        for comment in subreddits.stream.comments(skip_existing=True):
-            text = comment.body.lower()
-            if any(trigger in text for trigger in trigger_phrases):
-                if comment.id not in replied_comments and comment.author != reddit.user.me():
-                    reply = random.choice(comebacks)
-                    try:
-                        comment.reply(reply)
-                        print(f"🔥 Replied to: {comment.body}")
-                        print(f"👉 With: {reply}")
-                        replied_comments.add(comment.id)
-                        time.sleep(10)
-                    except Exception as reply_error:
-                        print(f"⚠️ Failed to reply: {reply_error}")
-                        time.sleep(5)
+        except Exception:
+            import traceback
+            print("💥 Bot crashed:")
+            traceback.print_exc()
+            print("⏳ Rebooting in 10 seconds...")
+            time.sleep(10)
 
-    except Exception as crash:
-        print(f"💥 Bot crashed: {crash}")
-        print("⏳ Rebooting in 10 seconds...")
-        time.sleep(10)
+# 🧠 Start both Flask and Reddit bot
+if __name__ == "__main__":
+    keep_alive()  # Start Flask in a thread
+    Thread(target=reddit_bot).start()  # Start Reddit bot in a separate thread
