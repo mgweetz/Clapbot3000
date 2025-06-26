@@ -60,6 +60,8 @@ subreddit_list = (
 while True:
     try:
         print("🤖 [REBOOTING] ClapBot3000 loading...")
+        print("🔍 Attempting to authenticate with Reddit...")
+
 
         reddit = praw.Reddit(
             client_id=os.environ["CLIENT_ID"],
