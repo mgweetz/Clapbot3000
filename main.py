@@ -71,7 +71,8 @@ while True:
             password=os.environ["PASSWORD"]
         )
 
-        print("🤖 SUCCESS: Logged in and ready to clap back as", reddit.user.me())
+        print("🤖 SUCCESS: Logged in and ready to clap back as", reddit.user.me(), flush=True)
+
 
         subreddits = reddit.subreddit(subreddit_list)
         replied_comments = set()
