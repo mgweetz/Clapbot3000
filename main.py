@@ -56,8 +56,7 @@ subreddit_list = (
     "roastme+SipsTea+PublicFreakout+ClashRoyale+shitposting+instant_regret+"
     "HadToHurt+rareinsults+Nicegirls+NoRules+madlads+cringereels"
 )
-
-# ===== MAIN LOOP =====
+# ===== MAIN LOOP: AUTO-RESTART ON CRASH =====
 while True:
     try:
         print("🤖 [REBOOTING] ClapBot3000 loading...")
@@ -65,16 +64,12 @@ while True:
         reddit = praw.Reddit(
             client_id=os.environ["CLIENT_ID"],
             client_secret=os.environ["CLIENT_SECRET"],
-            user_agent="ClapBot3000 by u/" + os.environ["USERNAME"],
+            user_agent="ClapBot3000 by /u/" + os.environ["USERNAME"],
             username=os.environ["USERNAME"],
             password=os.environ["PASSWORD"]
         )
 
-# NEW LINE HERE
-print("🤖 SUCCESS: Logged in and ready to clap back as", reddit.user.me())
-
-
-        print(f"✅ Logged in as: {reddit.user.me()}")
+        print("🤖 SUCCESS: Logged in and ready to clap back as", reddit.user.me())
 
         subreddits = reddit.subreddit(subreddit_list)
         replied_comments = set()
@@ -98,4 +93,3 @@ print("🤖 SUCCESS: Logged in and ready to clap back as", reddit.user.me())
         print(f"💥 Bot crashed: {crash}")
         print("⏳ Rebooting in 10 seconds...")
         time.sleep(10)
-
