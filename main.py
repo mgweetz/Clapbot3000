@@ -70,6 +70,10 @@ while True:
             password=os.environ["PASSWORD"]
         )
 
+# NEW LINE HERE
+print("🤖 SUCCESS: Logged in and ready to clap back as", reddit.user.me())
+
+
         print(f"✅ Logged in as: {reddit.user.me()}")
 
         subreddits = reddit.subreddit(subreddit_list)
